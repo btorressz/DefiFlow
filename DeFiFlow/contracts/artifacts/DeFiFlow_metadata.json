@@ -1,0 +1,859 @@
+{
+	"compiler": {
+		"version": "0.8.26+commit.8a97fa7a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_tokenA",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_tokenB",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_tokenC",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_uniswapRouter",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_sushiSwapRouter",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_priceFeed",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_maxOrderSize",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_minProfitThreshold",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_rebalanceThreshold",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_stopLossThreshold",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					}
+				],
+				"name": "OwnableInvalidOwner",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "OwnableUnauthorizedAccount",
+				"type": "error"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "liquidityWithdrawn",
+						"type": "uint256"
+					}
+				],
+				"name": "ImpermanentLossMitigation",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amountA",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amountB",
+						"type": "uint256"
+					}
+				],
+				"name": "LiquidityAdded",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amountA",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amountB",
+						"type": "uint256"
+					}
+				],
+				"name": "LiquidityRemoved",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "previousOwner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "OwnershipTransferred",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "newPrice",
+						"type": "uint256"
+					}
+				],
+				"name": "Rebalanced",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "liquidityWithdrawn",
+						"type": "uint256"
+					}
+				],
+				"name": "StopLossTriggered",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "tokenIn",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "tokenOut",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amountIn",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amountOut",
+						"type": "uint256"
+					}
+				],
+				"name": "SwapExecuted",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes",
+						"name": "",
+						"type": "bytes"
+					}
+				],
+				"name": "checkUpkeep",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "upkeepNeeded",
+						"type": "bool"
+					},
+					{
+						"internalType": "bytes",
+						"name": "performData",
+						"type": "bytes"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "amountIn",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address[]",
+						"name": "path",
+						"type": "address[]"
+					}
+				],
+				"name": "executeSwap",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getCurrentMarketPrice",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "lastRebalance",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "maxOrderSize",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "minProfitThreshold",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "mitigateImpermanentLoss",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes",
+						"name": "",
+						"type": "bytes"
+					}
+				],
+				"name": "performUpkeep",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "priceFeed",
+				"outputs": [
+					{
+						"internalType": "contract AggregatorV3Interface",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "amountA",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amountB",
+						"type": "uint256"
+					}
+				],
+				"name": "provideLiquidity",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "rebalanceThreshold",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "liquidity",
+						"type": "uint256"
+					}
+				],
+				"name": "removeLiquidity",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "renounceOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "stopLossThreshold",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "sushiSwapRouter",
+				"outputs": [
+					{
+						"internalType": "contract ISushiSwapRouter",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "tokenA",
+				"outputs": [
+					{
+						"internalType": "contract IERC20",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "tokenB",
+				"outputs": [
+					{
+						"internalType": "contract IERC20",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "tokenC",
+				"outputs": [
+					{
+						"internalType": "contract IERC20",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "transferOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "triggerStopLoss",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "uniswapPairAB",
+				"outputs": [
+					{
+						"internalType": "contract IUniswapV2Pair",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "uniswapPairAC",
+				"outputs": [
+					{
+						"internalType": "contract IUniswapV2Pair",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "uniswapPairBC",
+				"outputs": [
+					{
+						"internalType": "contract IUniswapV2Pair",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "uniswapRouter",
+				"outputs": [
+					{
+						"internalType": "contract IUniswapV2Router02",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "newMaxOrderSize",
+						"type": "uint256"
+					}
+				],
+				"name": "updateMaxOrderSize",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "newMinProfitThreshold",
+						"type": "uint256"
+					}
+				],
+				"name": "updateMinProfitThreshold",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "newRebalanceThreshold",
+						"type": "uint256"
+					}
+				],
+				"name": "updateRebalanceThreshold",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "newStopLossThreshold",
+						"type": "uint256"
+					}
+				],
+				"name": "updateStopLossThreshold",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"errors": {
+				"OwnableInvalidOwner(address)": [
+					{
+						"details": "The owner is not a valid owner account. (eg. `address(0)`)"
+					}
+				],
+				"OwnableUnauthorizedAccount(address)": [
+					{
+						"details": "The caller account is not authorized to perform an operation."
+					}
+				]
+			},
+			"kind": "dev",
+			"methods": {
+				"checkUpkeep(bytes)": {
+					"details": "This function checks if conditions are met for rebalancing.",
+					"returns": {
+						"performData": "Bytes to pass to performUpkeep if upkeep is needed.",
+						"upkeepNeeded": "Returns true if upkeep is needed."
+					}
+				},
+				"constructor": {
+					"details": "Initializes the contract with the tokens, Uniswap router, and price feed.",
+					"params": {
+						"_maxOrderSize": "The maximum size for each order to limit exposure.",
+						"_minProfitThreshold": "Minimum profit in basis points to consider an action.",
+						"_priceFeed": "Address of the Chainlink price feed contract.",
+						"_rebalanceThreshold": "Price change threshold in basis points for triggering rebalancing.",
+						"_stopLossThreshold": "Price change threshold in basis points for triggering stop-loss.",
+						"_sushiSwapRouter": "Address of the SushiSwap router contract.",
+						"_tokenA": "Address of the first token in the pair.",
+						"_tokenB": "Address of the second token in the pair.",
+						"_tokenC": "Address of the third token (optional integration).",
+						"_uniswapRouter": "Address of the Uniswap V2 router contract."
+					}
+				},
+				"executeSwap(uint256,address[])": {
+					"details": "This function swaps tokenA for tokenB, tokenA for tokenC, or tokenB for tokenC, choosing the best platform based on price.",
+					"params": {
+						"amountIn": "The amount of the input token.",
+						"path": "The path of the swap, which could involve tokenC as well."
+					}
+				},
+				"getCurrentMarketPrice()": {
+					"returns": {
+						"_0": "The current market price."
+					}
+				},
+				"mitigateImpermanentLoss()": {
+					"details": "This function checks volatility and impermanent loss, and mitigates if necessary."
+				},
+				"owner()": {
+					"details": "Returns the address of the current owner."
+				},
+				"performUpkeep(bytes)": {
+					"details": "This function is triggered by Chainlink Keepers when conditions are met."
+				},
+				"provideLiquidity(uint256,uint256)": {
+					"details": "This function adds liquidity to the Uniswap pool."
+				},
+				"removeLiquidity(uint256)": {
+					"details": "This function burns the LP tokens to remove liquidity from the pool."
+				},
+				"renounceOwnership()": {
+					"details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+				},
+				"transferOwnership(address)": {
+					"details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+				},
+				"triggerStopLoss()": {
+					"details": "This function is triggered when the stop-loss threshold is reached."
+				},
+				"updateMaxOrderSize(uint256)": {
+					"params": {
+						"newMaxOrderSize": "The new maximum order size."
+					}
+				},
+				"updateMinProfitThreshold(uint256)": {
+					"params": {
+						"newMinProfitThreshold": "The new minimum profit threshold in basis points."
+					}
+				},
+				"updateRebalanceThreshold(uint256)": {
+					"params": {
+						"newRebalanceThreshold": "The new rebalance threshold in basis points."
+					}
+				},
+				"updateStopLossThreshold(uint256)": {
+					"params": {
+						"newStopLossThreshold": "The new stop-loss threshold in basis points."
+					}
+				}
+			},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"checkUpkeep(bytes)": {
+					"notice": "Implements Chainlink Keepers to automate rebalancing."
+				},
+				"executeSwap(uint256,address[])": {
+					"notice": "Executes a swap on the best DEX."
+				},
+				"getCurrentMarketPrice()": {
+					"notice": "Retrieves the current market price from the Chainlink price feed."
+				},
+				"mitigateImpermanentLoss()": {
+					"notice": "Mitigates impermanent loss by adjusting or removing liquidity during high volatility."
+				},
+				"performUpkeep(bytes)": {
+					"notice": "Performs the automated rebalancing of liquidity."
+				},
+				"provideLiquidity(uint256,uint256)": {
+					"notice": "Provides liquidity to the Uniswap pool for tokenA and tokenB."
+				},
+				"removeLiquidity(uint256)": {
+					"notice": "Removes liquidity from the Uniswap pool for tokenA and tokenB."
+				},
+				"triggerStopLoss()": {
+					"notice": "Triggers stop-loss mechanism to prevent further losses."
+				},
+				"updateMaxOrderSize(uint256)": {
+					"notice": "Updates the maximum order size."
+				},
+				"updateMinProfitThreshold(uint256)": {
+					"notice": "Updates the minimum profit threshold."
+				},
+				"updateRebalanceThreshold(uint256)": {
+					"notice": "Updates the rebalance threshold."
+				},
+				"updateStopLossThreshold(uint256)": {
+					"notice": "Updates the stop-loss threshold."
+				}
+			},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/DeFiFlow.sol": "DeFiFlow"
+		},
+		"evmVersion": "cancun",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"@chainlink/contracts/src/v0.8/AutomationBase.sol": {
+			"keccak256": "0x5d354afa1a97dffe66094397cdcbb0c14713cf3d609d88fd8f9891010e9a351a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://3613ee132e1f05b3e23955db6a849966487fab8ea33e9bb70d6f038fc48c0608",
+				"dweb:/ipfs/QmRgdumWFMX35vSrZpCCvXDTvRBVXRkexnxoZqqfnGisnZ"
+			]
+		},
+		"@chainlink/contracts/src/v0.8/AutomationCompatible.sol": {
+			"keccak256": "0x40e5ae0eff4edd0740c1b5590d09c344f84dee031e82d5294563e99603774f80",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://24a134c3bea2e8a6ed29f109e422a9bafb3f43523235188618cf016ed86fafc8",
+				"dweb:/ipfs/QmPUGoVde38kbteT358jsskzh5spoJtUoaNZ8UJWVqP3im"
+			]
+		},
+		"@chainlink/contracts/src/v0.8/KeeperCompatible.sol": {
+			"keccak256": "0xa5f26a85ab9a927016e27af9f1ec33f878c28d8f06cb611e7fb2e189a5336a43",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://03a963b546b80fb62d2ef16805a8acae1c17b2038d76c133f4779ec87484f9b0",
+				"dweb:/ipfs/QmWvwAFDHp5fQNPFQ5shAFh5YRNNzqLMoS5LZYDjPnydFw"
+			]
+		},
+		"@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol": {
+			"keccak256": "0xfe4e8bb4861bb3860ba890ab91a3b818ec66e5a8f544fb608cfcb73f433472cd",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://644cff84052e1e82b5bb502b2a46e8f142a62b0db4cd9b38200798ba8373c6f7",
+				"dweb:/ipfs/QmTa99QHrJBn3SXDizquPBUiTxVCNKQrHgaWJhuds5Sce2"
+			]
+		},
+		"@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.sol": {
+			"keccak256": "0x67076747c6f66d8d43472a56e72879c350056bff82e069addaf9064922863340",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://b738dba680a6fbc4afc85819743f13f5b7f4790ec8634c9894e1160327b11b6e",
+				"dweb:/ipfs/Qmbv3euvQppeBm2g61khcJSRMZWi78xUWzbnjKAvDBnka4"
+			]
+		},
+		"@openzeppelin/contracts/access/Ownable.sol": {
+			"keccak256": "0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://8ed324d3920bb545059d66ab97d43e43ee85fd3bd52e03e401f020afb0b120f6",
+				"dweb:/ipfs/QmfEckWLmZkDDcoWrkEvMWhms66xwTLff9DDhegYpvHo1a"
+			]
+		},
+		"@openzeppelin/contracts/security/ReentrancyGuard.sol": {
+			"keccak256": "0xa535a5df777d44e945dd24aa43a11e44b024140fc340ad0dfe42acf4002aade1",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://41319e7f621f2dc3733511332c4fd032f8e32ad2aa7fd6f665c19741d9941a34",
+				"dweb:/ipfs/QmcYR3bd862GD1Bc7jwrU9bGxrhUu5na1oP964bDCu2id1"
+			]
+		},
+		"@openzeppelin/contracts/token/ERC20/IERC20.sol": {
+			"keccak256": "0xc6a8ff0ea489379b61faa647490411b80102578440ab9d84e9a957cc12164e70",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://0ea104e577e63faea3b69c415637e99e755dcbf64c5833d7140c35a714d6d90c",
+				"dweb:/ipfs/Qmau6x4Ns9XdyynRCNNp3RhLqijJjFm7z5fyZazfYFGYdq"
+			]
+		},
+		"@openzeppelin/contracts/utils/Context.sol": {
+			"keccak256": "0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6a708e8a5bdb1011c2c381c9a5cfd8a9a956d7d0a9dc1bd8bcdaf52f76ef2f12",
+				"dweb:/ipfs/Qmax9WHBnVsZP46ZxEMNRQpLQnrdE4dK8LehML1Py8FowF"
+			]
+		},
+		"@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol": {
+			"keccak256": "0xe5905c0989cf5a865ed9bb7b9252536ca011c5b744017a82a7d4443b9c00a891",
+			"urls": [
+				"bzz-raw://5d2a90a0a796491507462a3da18c3f8819721d571572d765a2207c35bf0a0389",
+				"dweb:/ipfs/Qmf9ACYiT3qzjgsYuhm866FBdiBpRMXAPpQhSFbgqcyhHt"
+			]
+		},
+		"@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol": {
+			"keccak256": "0x7c9bc70e5996c763e02ff38905282bc24fb242b0ef2519a003b36824fc524a4b",
+			"urls": [
+				"bzz-raw://85d5ad2dd23ee127f40907a12865a1e8cb5828814f6f2480285e1827dd72dedf",
+				"dweb:/ipfs/QmayKQWJgWmr46DqWseADyUanmqxh662hPNdAkdHRjiQQH"
+			]
+		},
+		"@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router01.sol": {
+			"keccak256": "0x8a3c5c449d4b7cd76513ed6995f4b86e4a86f222c770f8442f5fc128ce29b4d2",
+			"urls": [
+				"bzz-raw://1df63ca373dafae3bd0ee7fe70f890a1dc7c45ed869c01de68413e0e97ff9deb",
+				"dweb:/ipfs/QmefJgEYGUL8KX7kQKYTrDweF8GB7yjy3nw5Bmqzryg7PG"
+			]
+		},
+		"@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol": {
+			"keccak256": "0x744e30c133bd0f7ca9e7163433cf6d72f45c6bb1508c2c9c02f1a6db796ae59d",
+			"urls": [
+				"bzz-raw://9bf2f4454ad63d4cff03a0630e787d9e8a9deed80aec89682cd8ad6379d9ef8c",
+				"dweb:/ipfs/Qme51hQNR2wpax7ooUadhtqLtXm8ffeVVYyubLkTT4wMCG"
+			]
+		},
+		"contracts/DeFiFlow.sol": {
+			"keccak256": "0x1075d5920bf7e652849dcb6b1487cc0b480637118ecd79259e7b361718f8e055",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://75d40b5c407a6bc9928e378c6be4a1b1a54dce6c690b8995439c548684a9f4d0",
+				"dweb:/ipfs/QmSkzHoniYtnhua5MsTnqxwymirRZm2UPibuGCwvukNb2J"
+			]
+		}
+	},
+	"version": 1
+}
